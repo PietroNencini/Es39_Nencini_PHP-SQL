@@ -15,17 +15,22 @@
     
     <?php
         $actor_code = $_GET["act_code"];
+        $deleted_rows = 0;
 
         $text_query_recita = "DELETE FROM recita WHERE codAttore = $actor_code";
 
+
         if(!$conn->query($text_query_recita))   // Elimina prima dalla tabella con attori referenziati
             header("Location: ../error.html");
+        $deleted_rows += $conn->affected_rows;
 
         $text_query_attore = "DELETE FROM attori WHERE codAttore = $actor_code";    // Poi elimina effettivamente dalla tabella degli attori
 
-        if($conn->query($text_query_attore))
-            echo ($conn->affected_rows > 0) ? "<p class='text-success'> Attore [$actor_code] rimosso con successo </p>" : "<p class='text-warning'> Nessun attore [$actor_code] rimosso dalla tabella Recita </p>";
-        else
+        if($conn->query($text_query_attore)) {
+            echo ($conn->affected_rows > 0) ? "<p class='text-success'> Attore [$actor_code] rimosso con successo </p>" : "<p class='text-warning'> Nessun attore [$actor_code] rimosso</p>";
+            $deleted_rows += $conn->affected_rows;
+            echo "<p> righe eliminate: $deleted_rows";
+        } else
             header("Location: ../error.html");
     
     ?>
